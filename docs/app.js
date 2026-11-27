@@ -8,7 +8,7 @@ import {
   initializeFirestore, connectFirestoreEmulator, persistentLocalCache, persistentMultipleTabManager,
   collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch, arrayUnion, arrayRemove,
 } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
-import { CHALLENGE, firebaseConfig } from './config.js';
+import { CHALLENGE, firebaseConfig } from './firebase-config.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -574,7 +574,7 @@ document.addEventListener('change', (e) => {
 
 // ---------- 시작 ----------
 if (notConfigured && !useEmulator) {
-  $('#board').innerHTML = `<div class="card empty">Firebase 설정이 아직 없어요.<br/><b>public/config.js</b> 에 Firebase 웹 앱 구성값을 넣어 주세요.</div>`;
+  $('#board').innerHTML = `<div class="card empty">Firebase 설정이 아직 없어요.<br/><b>docs/firebase-config.js</b> 에 Firebase 웹 앱 구성값을 넣어 주세요.</div>`;
 } else {
   renderMeta();
   onAuthStateChanged(auth, (user) => {

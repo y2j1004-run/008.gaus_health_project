@@ -19,11 +19,11 @@
 ## 구조
 
 ```
-public/
+docs/                (GitHub Pages로 공개되는 폴더)
   index.html   화면
   style.css    디자인
   app.js       동작 (Firebase SDK를 CDN에서 불러옴, 빌드 불필요)
-  config.js    ★ 챌린지 설정 + Firebase 구성값 (여기만 고치면 됨)
+  firebase-config.js  ★ 챌린지 설정 + Firebase 구성값 (여기만 고치면 됨)
 firestore.rules  보안 규칙 (본인만 내 기록/목표 수정, 이름 중복 방지 등)
 firebase.json    Firebase Hosting / Firestore / 에뮬레이터 설정
 ```
@@ -38,35 +38,31 @@ firebase.json    Firebase Hosting / Firestore / 에뮬레이터 설정
 
 PIN은 Firestore에 저장되지 않아요. 참가자마다 Firebase Authentication 계정(내부용 가짜 이메일 + PIN 기반 비밀번호)을 만들고, 보안 규칙이 "로그인한 본인만 내 데이터 수정"을 강제합니다.
 
-## 배포 (무료 Spark 요금제로 충분)
+## 배포 (Firebase 무료 Spark 요금제 + GitHub Pages)
 
-### 1. Firebase 프로젝트 만들기
-1. https://console.firebase.google.com → **프로젝트 추가** → 이름(예: `crong-gaus-challenge`) → 애널리틱스는 꺼도 됨.
-2. **빌드 → Authentication → 시작하기 → Sign-in method → 이메일/비밀번호 → 사용 설정 → 저장**
-   (아래 "이메일 링크"는 켜지 않아도 됩니다.)
-3. **빌드 → Firestore Database → 데이터베이스 만들기** → 위치 `asia-northeast3 (서울)` → **프로덕션 모드**로 시작.
-4. **프로젝트 설정(⚙️) → 일반 → 내 앱 → 웹(</>)** 아이콘 → 앱 닉네임 입력 → 등록.
-   표시되는 `const firebaseConfig = { ... }` 값을 [`public/config.js`](public/config.js)의 `firebaseConfig`에 그대로 붙여넣습니다.
+웹페이지는 GitHub Pages(`docs/` 폴더)로 띄우고, 데이터만 Firebase에 저장합니다. PC나 명령어 없이 콘솔 화면만으로 설정할 수 있어요.
 
-### 2. 보안 규칙 + 웹페이지 올리기 (PC, Node.js 18+)
-```bash
-npm install -g firebase-tools
-firebase login
-firebase use --add          # 방금 만든 프로젝트 선택 (alias: default)
-npm run deploy              # = firebase deploy --only hosting,firestore
-```
-끝나면 `https://<프로젝트ID>.web.app` 주소가 나와요. 단톡방에 공유하세요!
+1. https://console.firebase.google.com 에서 새 프로젝트를 만들어요. (애널리틱스는 꺼도 돼요.)
+2. **Firestore Database**를 만들어요. 위치는 서울(`asia-northeast3`), 모드는 **프로덕션**으로 해 주세요.
+3. Firestore의 **규칙** 탭에 저장소의 [`firestore.rules`](firestore.rules) 내용을 통째로 붙여넣고 **게시**해요.
+   ⚠️ 게시하지 않으면 프로덕션 모드 기본 규칙 때문에 아무것도 저장되지 않아요.
+4. **Authentication → 로그인 방법 → 이메일/비밀번호**를 켜요. ("이메일 링크"는 끈 채로 두세요.)
+   참여자가 이메일을 입력하는 게 아니라, **이름 + PIN 4자리**를 내부용 계정으로 바꿔 쓰는 용도예요.
+   덕분에 휴대폰을 바꾸거나 다른 기기에서도 이름 + PIN으로 다시 로그인할 수 있어요.
+5. **프로젝트 설정(⚙️) → 일반 → 내 앱 → 웹(</>)** 으로 웹 앱을 추가하면 `firebaseConfig` 값이 나와요.
+   이 값을 [`docs/firebase-config.js`](docs/firebase-config.js)의 `firebaseConfig`에 넣고 커밋해요. (공개돼도 괜찮은 값이에요. 데이터 보호는 3번의 보안 규칙이 담당해요.)
+6. GitHub 저장소 **Settings → Pages → Build and deployment**: Source는 **Deploy from a branch**, 브랜치는 이 브랜치, 폴더는 **`/docs`** → Save.
+   1~2분 뒤 **https://y2j1004-run.github.io/008.gaus_health_project/** 에서 열려요. 단톡방에 공유하세요!
 
-> CLI 없이 하고 싶다면: Firebase 콘솔 **Firestore Database → 규칙** 탭에 [`firestore.rules`](firestore.rules) 내용을 통째로 붙여넣고 **게시**한 뒤,
-> `public/` 폴더를 정적 호스팅(GitHub Pages, Netlify Drop 등)에 올려도 동작합니다.
-> ⚠️ 규칙을 게시하지 않으면 프로덕션 모드 기본 규칙 때문에 아무것도 저장되지 않아요.
+확인: 링크를 열어 👤 **내 목표**에서 테스트로 등록 → 콘솔 Firestore에 `participants`, `names` 컬렉션이 생기고, Authentication에 사용자가 1명 추가됩니다.
 
-### 3. 확인
-링크를 열어 👤 **내 목표**에서 테스트로 등록 → 콘솔 Firestore에 `participants`, `names` 컬렉션이 생기고, Authentication에 사용자가 1명 추가됩니다.
+> **승인된 도메인**(Authentication → 설정)에 `y2j1004-run.github.io`를 추가하는 건 선택이에요. 이메일/비밀번호 로그인은 이 목록과 상관없이 동작하고, 구글 로그인 같은 팝업 방식에서만 필요해요. 넣어 두어도 문제는 없어요.
+>
+> Firebase Hosting을 쓰고 싶다면(PC, Node.js 18+): `npm i -g firebase-tools && firebase login && firebase use --add && npm run deploy` → `https://<프로젝트ID>.web.app` (규칙도 함께 올라가요.)
 
 ## 설정 바꾸기
 
-[`public/config.js`](public/config.js) 맨 위 `CHALLENGE` 값을 수정 후 다시 `npm run deploy`.
+[`docs/firebase-config.js`](docs/firebase-config.js) 맨 위 `CHALLENGE` 값을 수정 후 커밋하면 GitHub Pages에 1~2분 뒤 반영돼요.
 
 | 항목 | 기본값 | 설명 |
 |---|---|---|
@@ -78,9 +74,9 @@ npm run deploy              # = firebase deploy --only hosting,firestore
 
 Java 11+ 와 `firebase-tools` 필요.
 ```bash
-npm run dev      # Auth·Firestore·Hosting 에뮬레이터 실행
+npm run dev      # Auth·Firestore·Hosting 에뮬레이터 실행 (docs/ 폴더를 서비스)
 ```
-http://localhost:5000 접속. `config.js`가 아직 비어 있으면 자동으로 에뮬레이터에 연결되고,
+http://localhost:5000 접속. `firebase-config.js`가 아직 비어 있으면 자동으로 에뮬레이터에 연결되고,
 설정을 넣은 뒤에도 `http://localhost:5000/?emulator` 로 열면 에뮬레이터를 씁니다.
 
 ## 운영 팁
