@@ -70,6 +70,8 @@ PIN은 Firestore에 저장되지 않아요. 참가자마다 Firebase Authenticat
 | `weeks` | `10` | 기간(주) |
 | `perWeek` | `2` | 주당 목표 횟수 |
 
+> 💡 `docs/` 파일을 고친 뒤에는 `index.html`·`app.js`의 `?v=숫자`를 새 숫자로 바꿔 주세요. 그래야 참여자 휴대폰에 예전 파일이 캐시로 남지 않고 바로 반영돼요.
+
 ## 로컬에서 테스트 (에뮬레이터, 실제 데이터에 영향 없음)
 
 Java 11+ 와 `firebase-tools` 필요.

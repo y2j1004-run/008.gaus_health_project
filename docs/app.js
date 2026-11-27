@@ -8,7 +8,7 @@ import {
   initializeFirestore, connectFirestoreEmulator, persistentLocalCache, persistentMultipleTabManager,
   collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch, arrayUnion, arrayRemove,
 } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
-import { CHALLENGE, firebaseConfig } from './firebase-config.js';
+import { CHALLENGE, firebaseConfig } from './firebase-config.js?v=202611271129';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
