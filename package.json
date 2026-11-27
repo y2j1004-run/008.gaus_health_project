@@ -1,0 +1,12 @@
+{
+  "name": "crong-gaus-muscle-challenge",
+  "version": "1.0.0",
+  "description": "크롱과 함께하는 가우스 근력챌린지 - Firebase(Firestore + Auth)로 함께 운동 기록을 남기고 보는 웹페이지",
+  "private": true,
+  "scripts": {
+    "dev": "firebase emulators:start --project demo-crong-gaus",
+    "deploy": "firebase deploy --only hosting,firestore",
+    "deploy:rules": "firebase deploy --only firestore:rules"
+  },
+  "license": "MIT"
+}

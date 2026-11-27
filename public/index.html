@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>크롱과 함께하는 가우스 근력챌린지</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💪</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">🔥 겨울에는 근력 UP! 봄에는 PB! 🔥</p>
+      <h1>크롱과 함께하는 가우스 근력챌린지</h1>
+      <p class="sub">혼자서는 미루기 쉬운 보강운동, 함께해요!</p>
+      <div class="meta" id="meta"></div>
+    </div>
+  </header>
+
+  <nav class="tabs wrap" role="tablist">
+    <button class="tab active" data-tab="board">🏆 현황</button>
+    <button class="tab" data-tab="log">✍️ 기록하기</button>
+    <button class="tab" data-tab="feed">📰 피드</button>
+    <button class="tab" data-tab="me">👤 내 목표</button>
+  </nav>
+
+  <main class="wrap">
+    <!-- 현황 -->
+    <section id="tab-board" class="panel active">
+      <div class="summary" id="summary"></div>
+      <div id="board"></div>
+    </section>
+
+    <!-- 기록하기 -->
+    <section id="tab-log" class="panel">
+      <div id="log-area"></div>
+    </section>
+
+    <!-- 피드 -->
+    <section id="tab-feed" class="panel">
+      <div class="row filter">
+        <label for="feed-filter">보기</label>
+        <select id="feed-filter"><option value="">전체 참가자</option></select>
+      </div>
+      <div id="feed"></div>
+    </section>
+
+    <!-- 내 목표 -->
+    <section id="tab-me" class="panel">
+      <div id="me-area"></div>
+    </section>
+  </main>
+
+  <details class="wrap rules">
+    <summary>📅 챌린지 방법</summary>
+    <ul>
+      <li>기간 : 10주 (주 2회, 총 20회)</li>
+      <li>개인별 운동 목표 자율 설정</li>
+      <li>한 주에 2회까지 인정돼요 (주차는 월요일 시작).</li>
+    </ul>
+    <p><b>🏋️ 개인별 목표 예시 (율은, 주 2회)</b></p>
+    <ul>
+      <li>불스스 : 덤벨 ○kg / 좌우 각 20회 × 5세트 (약 15분)</li>
+      <li>카프레이즈 : 좌우 각 20회 × 3세트 (약 5분)</li>
+      <li>플랭크 &amp; 사이드 플랭크(좌우) : 각 1분 20초 × 2세트 (약 10분)</li>
+      <li>매달리기 : 1분 × 3세트 (약 5분)</li>
+    </ul>
+    <p>⏱️ 예상 소요시간 : 35~40분 (세트 간 휴식 포함)</p>
+  </details>
+
+  <div id="toast" class="toast" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
