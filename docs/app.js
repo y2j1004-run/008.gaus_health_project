@@ -454,7 +454,7 @@ function renderMe() {
     <h3>참가 등록</h3>
     <p class="muted">이름과 PIN을 정하고, 나만의 운동 목표를 세워 보세요. PIN은 내 기록을 지키는 비밀번호예요.</p>
     <form id="join-form">
-      <div class="field"><label>이름 (닉네임)</label><input type="text" name="name" maxlength="20" required placeholder="예) 율은" /></div>
+      <div class="field"><label>이름 (닉네임)</label><input type="text" name="name" maxlength="20" required placeholder="예) 크롱" /></div>
       <div class="field"><label>PIN (숫자 4자리)</label><input type="password" inputmode="numeric" name="pin" maxlength="4" pattern="\\d{4}" required /></div>
       <div class="field"><label>운동 요일 (주 ${state.config.perWeek}회 추천)</label>${daysPicker([2, 4])}</div>
       <div class="field"><label>나의 운동 목표</label>${goalEditor(EXAMPLE_GOALS)}</div>
