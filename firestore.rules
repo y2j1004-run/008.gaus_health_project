@@ -4,7 +4,7 @@ rules_version = '2';
 // - 누구나 현황/피드를 볼 수 있어요 (읽기 공개).
 // - 참가자 = Firebase 로그인 계정 1개 (이름 + 4자리 PIN으로 로그인).
 // - 내 목표 수정, 내 기록 추가/삭제는 본인만 가능해요.
-// - 응원(👏)은 로그인한 참가자 누구나 'cheers' 칸만 바꿀 수 있어요.
+// - 응원(👏)과 한줄 코멘트는 로그인한 참가자가 '내 이름'으로만 남기고 지울 수 있어요.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -61,7 +61,7 @@ service cloud.firestore {
       allow read: if true;
 
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['participantId', 'date', 'results', 'note', 'createdAt', 'cheers'])
+        && request.resource.data.keys().hasOnly(['participantId', 'date', 'results', 'note', 'createdAt', 'cheers', 'comments'])
         && request.resource.data.participantId == request.auth.uid
         && exists(participantPath(request.auth.uid))
         && request.resource.data.date is string
@@ -70,7 +70,8 @@ service cloud.firestore {
         && request.resource.data.results.size() <= 20
         && isStr(request.resource.data.note, 0, 500)
         && request.resource.data.createdAt is string
-        && request.resource.data.cheers == [];
+        && request.resource.data.cheers == []
+        && request.resource.data.get('comments', []) == [];
 
       allow delete: if signedIn() && resource.data.participantId == request.auth.uid;
 
@@ -80,6 +81,26 @@ service cloud.firestore {
         && request.resource.data.cheers is list
         && request.resource.data.cheers.size() <= 300
         && onlyMyCheerChanged();
+
+      // 한줄 응원 코멘트: comments 칸만, '내 이름'으로 1개 추가하거나 내 코멘트 1개 삭제
+      allow update: if signedIn() && exists(participantPath(request.auth.uid))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comments'])
+        && request.resource.data.comments is list
+        && commentChangeOk(get(participantPath(request.auth.uid)).data.name,
+                           resource.data.get('comments', []), request.resource.data.comments);
+    }
+
+    function validComment(c, myName) {
+      return c is map && c.keys().hasOnly(['name', 'text', 'at'])
+        && c.name == myName
+        && isStr(c.text, 1, 100)
+        && c.at is string;
+    }
+    function commentChangeOk(myName, before, after) {
+      return (after.size() == before.size() + 1 && after.size() <= 200
+                && after.hasAll(before) && validComment(after.removeAll(before)[0], myName))
+        || (after.size() == before.size() - 1
+                && before.hasAll(after) && before.removeAll(after)[0].name == myName);
     }
 
     function onlyMyCheerChanged() {

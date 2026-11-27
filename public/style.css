@@ -1,27 +1,31 @@
 :root {
-  --bg: #dcf0fc;
+  --bg: #fff8f2;
   --card: #ffffff;
-  --text: #1c2a35;
-  --muted: #5d7484;
-  --line: #bfdff3;
+  --text: #2a1d14;
+  --muted: #8a7566;
+  --line: #f0e2d6;
   --accent: #ff5a1f;
   --accent-2: #ffb020;
   --accent-soft: #ffe7da;
   --ok: #17a35a;
   --danger: #d9363e;
-  --shadow: 0 2px 10px rgba(20, 80, 130, 0.08);
+  --shadow: 0 2px 10px rgba(80, 40, 10, 0.07);
+  --hero-1: #1f9ee3;
+  --hero-2: #5fcaf5;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e1d28;
-    --card: #162a38;
-    --text: #e6f2fa;
-    --muted: #8fabbd;
-    --line: #25455a;
+    --bg: #17110d;
+    --card: #221913;
+    --text: #f6ebe2;
+    --muted: #b09a8a;
+    --line: #3a2b20;
     --accent: #ff6d35;
     --accent-2: #ffb84a;
     --accent-soft: #3b2216;
     --shadow: none;
+    --hero-1: #13689c;
+    --hero-2: #2b97cf;
   }
 }
 * { box-sizing: border-box; }
@@ -36,7 +40,7 @@ body {
 .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
 
 .hero {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: linear-gradient(135deg, var(--hero-1), var(--hero-2));
   color: #fff;
   padding: 28px 0 22px;
 }
@@ -151,3 +155,12 @@ textarea { min-height: 80px; resize: vertical; }
 .check > span:nth-of-type(1) { flex: 1; min-width: 0; }
 .check .muted { display: block; font-weight: 400; }
 .check .spacer { display: none; }
+
+/* 한줄 응원 코멘트 */
+.comments { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); display: grid; gap: 6px; }
+.comment { display: flex; gap: 8px; align-items: baseline; font-size: .9rem; }
+.comment b { white-space: nowrap; }
+.comment .text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.comment .x { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: .8rem; padding: 2px 4px; }
+.comment-form { display: flex; gap: 6px; }
+.comment-form input { flex: 1; min-width: 0; padding: 8px 10px; font-size: .9rem; }

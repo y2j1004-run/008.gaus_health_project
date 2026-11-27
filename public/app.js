@@ -87,7 +87,7 @@ function subscribe() {
     scheduleRender();
   }, (e) => toast(friendly(e).message));
   onSnapshot(collection(db, 'logs'), (snap) => {
-    state.logs = snap.docs.map((d) => ({ id: d.id, results: [], cheers: [], note: '', ...d.data() }))
+    state.logs = snap.docs.map((d) => ({ id: d.id, results: [], cheers: [], comments: [], note: '', ...d.data() }))
       .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
     loaded.logs = true;
     scheduleRender();
@@ -360,8 +360,33 @@ function logItems(logs) {
       ${l.note ? `<p class="note">${esc(l.note)}</p>` : ''}
       <div class="row"><button class="btn ghost small cheer ${cheered ? 'on' : ''}" data-cheer="${l.id}">👏 응원 ${(l.cheers || []).length || ''}</button>
         ${(l.cheers || []).length ? `<span class="muted">${esc(l.cheers.join(', '))}</span>` : ''}</div>
+      ${commentsHtml(l, m)}
     </div>`;
   }).join('');
+}
+
+// 한줄 응원 코멘트
+const COMMENT_MAX = 100;
+function commentsHtml(l, m) {
+  const list = (l.comments || []).map((c, i) => `<div class="comment"><b>${esc(c.name)}</b><span class="text">${esc(c.text)}</span>
+      ${m && c.name === m.name ? `<button type="button" class="x" data-uncomment="${l.id}" data-idx="${i}" aria-label="코멘트 삭제">✕</button>` : ''}</div>`).join('');
+  const form = m ? `<form class="comment-form" data-comment="${l.id}">
+      <input type="text" name="text" maxlength="${COMMENT_MAX}" placeholder="💬 한줄 응원 남기기" autocomplete="off" />
+      <button class="btn small">등록</button></form>` : '';
+  return list || form ? `<div class="comments">${list}${form}</div>` : '';
+}
+// 다시 그릴 때 입력 중인 코멘트(내용·커서)를 보존
+function keepDrafts(container, draw) {
+  const drafts = {};
+  container.querySelectorAll('form[data-comment]').forEach((f) => { if (f.elements.text.value) drafts[f.dataset.comment] = f.elements.text.value; });
+  const a = document.activeElement;
+  const focused = a && container.contains(a) && a.closest('form[data-comment]') ? { id: a.closest('form').dataset.comment, pos: a.selectionStart } : null;
+  draw();
+  container.querySelectorAll('form[data-comment]').forEach((f) => { if (drafts[f.dataset.comment]) f.elements.text.value = drafts[f.dataset.comment]; });
+  if (focused) {
+    const input = container.querySelector(`form[data-comment="${focused.id}"] [name=text]`);
+    if (input) { input.focus(); try { input.setSelectionRange(focused.pos, focused.pos); } catch {} }
+  }
 }
 
 function resultsHtml(l) {
@@ -381,7 +406,9 @@ function renderFeed() {
   sel.value = state.participants.some((p) => p.id === cur) ? cur : '';
   const logs = state.logs.filter((l) => !sel.value || l.participantId === sel.value)
     .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
-  $('#feed').innerHTML = logItems(logs) || `<div class="card empty">아직 기록이 없어요. 첫 기록의 주인공이 되어 보세요! 🔥</div>`;
+  keepDrafts($('#feed'), () => {
+    $('#feed').innerHTML = logItems(logs) || `<div class="card empty">아직 기록이 없어요. 첫 기록의 주인공이 되어 보세요! 🔥</div>`;
+  });
 }
 
 function daysPicker(days = []) {
@@ -474,6 +501,12 @@ document.addEventListener('click', async (e) => {
       if (!log) { toast('기록을 찾을 수 없어요.'); return; }
       const on = (log.cheers || []).includes(m.name);
       await updateDoc(doc(db, 'logs', log.id), { cheers: on ? arrayRemove(m.name) : arrayUnion(m.name) }).catch((e) => { throw friendly(e); });
+    } else if (t.dataset.uncomment) {
+      const log = state.logs.find((l) => l.id === t.dataset.uncomment);
+      const c = log && (log.comments || [])[Number(t.dataset.idx)];
+      if (!c) return;
+      await updateDoc(doc(db, 'logs', log.id), { comments: arrayRemove(c) }).catch((e) => { throw friendly(e); });
+      toast('코멘트를 지웠어요.');
     }
   } catch (err) { toast(err.message); }
 });
@@ -487,7 +520,16 @@ document.addEventListener('submit', async (e) => {
   const btn = f.querySelector('button:not([type=button])');
   if (btn) btn.disabled = true;
   try {
-    if (f.dataset.login) {
+    if (f.dataset.comment) {
+      const m = me();
+      if (!m) throw new Error('코멘트를 남기려면 먼저 ✍️ 기록하기 탭에서 이름을 선택해 주세요.');
+      const text = cleanText(f.elements.text.value, COMMENT_MAX);
+      if (!text) throw new Error('응원 한마디를 입력해 주세요.');
+      await updateDoc(doc(db, 'logs', f.dataset.comment), { comments: arrayUnion({ name: m.name, text, at: new Date().toISOString() }) })
+        .catch((e) => { throw friendly(e); });
+      f.elements.text.value = '';
+      toast('응원을 남겼어요! 📣');
+    } else if (f.dataset.login) {
       await login(f.elements.id.value, f.elements.pin.value);
       document.activeElement.blur();
       render();

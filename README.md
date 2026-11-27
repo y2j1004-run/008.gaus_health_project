@@ -9,7 +9,7 @@
 |---|---|
 | 🏆 현황 | 참가자 전원의 **이번 주 요일표**(계획 요일 / 달성 ✅ / 일부 🟡 / 놓침 ❌), 개인별 진행률(인정 횟수 x/20), 10주 주차별 달성 점 |
 | ✍️ 기록하기 | 날짜 선택 → 내 목표 항목별 **달성/미달성 체크** → 메모 → 저장 |
-| 📰 피드 | 모든 참가자의 기록(항목별 ✅/❌, 메모), 👏 응원, 참가자별 필터 |
+| 📰 피드 | 모든 참가자의 기록(항목별 ✅/❌, 메모), 👏 응원 + 💬 한줄 응원 코멘트, 참가자별 필터 |
 | 👤 내 목표 | 참가 등록(이름 + 4자리 PIN), **운동 요일**과 **개인 목표** 설정·수정 |
 
 - 기간 10주(2026-11-30 월 ~ 2027-02-07 일) · 주 2회 · 총 20회. 한 주에 2회까지 인정, 같은 날 여러 번 기록해도 1회.
@@ -34,7 +34,7 @@ firebase.json    Firebase Hosting / Firestore / 에뮬레이터 설정
 |---|---|---|
 | `participants` | 로그인 계정 uid | `name`, `goals[{name,target}]`, `days[0~6]`, `createdAt`, `loginKey` |
 | `names` | 이름 | `uid` (이름 중복 방지용) |
-| `logs` | 자동 | `participantId`, `date`, `results[{name,target,achieved}]`, `note`, `createdAt`, `cheers[이름]` |
+| `logs` | 자동 | `participantId`, `date`, `results[{name,target,achieved}]`, `note`, `createdAt`, `cheers[이름]`, `comments[{name,text,at}]` |
 
 PIN은 Firestore에 저장되지 않아요. 참가자마다 Firebase Authentication 계정(내부용 가짜 이메일 + PIN 기반 비밀번호)을 만들고, 보안 규칙이 "로그인한 본인만 내 데이터 수정"을 강제합니다.
 
