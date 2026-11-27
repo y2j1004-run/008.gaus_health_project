@@ -11,10 +11,10 @@ CHALLENGE.totalGoal = CHALLENGE.weeks * CHALLENGE.perWeek;
 // Firebase 콘솔 → 프로젝트 설정(⚙️) → 일반 → 내 앱 → 웹 앱의 "SDK 설정 및 구성"(구성) 값을 그대로 붙여넣으세요.
 // (이 값은 공개되어도 괜찮아요. 데이터 보호는 firestore.rules 보안 규칙이 담당합니다.)
 export const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.firebasestorage.app',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyC7FqT0fyjinew5zZAD5SpNSwfiXlO1B08',
+  authDomain: 'gaushealth-2dfa5.firebaseapp.com',
+  projectId: 'gaushealth-2dfa5',
+  storageBucket: 'gaushealth-2dfa5.firebasestorage.app',
+  messagingSenderId: '381332218979',
+  appId: '1:381332218979:web:a168ea9bbe967786d50456',
 };
